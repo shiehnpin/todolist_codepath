@@ -18,7 +18,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/btnAddItem"/>
+        android:id="@+id/btnAddItem"
+        android:onClick="onAddItem"/>
 
     <ListView
         android:layout_width="match_parent"
