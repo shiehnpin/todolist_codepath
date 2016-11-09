@@ -1,5 +1,6 @@
 package com.codepath.simpletodo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -43,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                EditItemActivity.editItem(MainActivity.this,items.get(position),position);
+            }
+        });
     }
 
     public void onAddItem(View view) {
@@ -71,6 +78,21 @@ public class MainActivity extends AppCompatActivity {
             FileUtils.writeLines(todoFile,items);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == Constant.ACTION_EDIT_ITEM){
+            if(resultCode == RESULT_OK){
+                int pos = data.getIntExtra(Constant.KEY_ITEM_POS,-1);
+                String text = data.getStringExtra(Constant.KEY_ITEM_TEXT);
+                items.set(pos,text);
+                itemsAdapter.notifyDataSetChanged();
+                writeItems();
+            }
+        }else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }
