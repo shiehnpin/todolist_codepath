@@ -11,12 +11,14 @@ import java.util.Date;
 
 public class TodoItem implements Parcelable {
 
+    private long id;
     private String title;
     private String content;
     private Date dueDate;
     private int priority;
 
-    protected TodoItem(Parcel in) {
+    public TodoItem(Parcel in) {
+        id = in.readLong();
         title = in.readString();
         content = in.readString();
         dueDate = (Date) in.readSerializable();
@@ -35,6 +37,11 @@ public class TodoItem implements Parcelable {
         }
     };
 
+    public TodoItem() {
+
+
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -42,6 +49,7 @@ public class TodoItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(title);
         dest.writeString(content);
         dest.writeSerializable(dueDate);
@@ -80,4 +88,11 @@ public class TodoItem implements Parcelable {
         this.priority = priority;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }
