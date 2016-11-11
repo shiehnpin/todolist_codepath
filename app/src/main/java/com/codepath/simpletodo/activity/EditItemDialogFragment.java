@@ -94,7 +94,7 @@ public class EditItemDialogFragment extends DialogFragment implements View.OnCli
         }
         initPriorityWidget();
 
-        if(todoItem.getDueDate().getTime()==Constant.UNSET){
+        if(todoItem.getDueDate()==null || todoItem.getDueDate().getTime()==Constant.UNSET){
             dueDatePicker.setVisibility(View.GONE);
             swDate.setChecked(false);
         }else{
@@ -145,7 +145,7 @@ public class EditItemDialogFragment extends DialogFragment implements View.OnCli
     private void initDueDatePicker() {
         calendar = Calendar.getInstance();
 
-        if(todoItem.getDueDate().getTime()!= Constant.UNSET) {
+        if(todoItem.getDueDate()!=null && todoItem.getDueDate().getTime()!= Constant.UNSET) {
             calendar.setTime(todoItem.getDueDate());
         }else{
             calendar.setTime(new Date());
