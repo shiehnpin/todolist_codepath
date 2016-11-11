@@ -7,4 +7,5 @@ public class Constant {
     public static final String KEY_ITEM = "key.item.text";
     public static final String KEY_ITEM_POS = "key.item.pos";
     public static final int ACTION_EDIT_ITEM = 1;
+    public static final long UNSET = 0;
 }
