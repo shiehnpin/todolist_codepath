@@ -48,7 +48,7 @@ public class TodoItemDAO {
         ContentValues cv = new ContentValues();
         cv.put(TITLE_COLUMN, item.getTitle());
         cv.put(CONTENT_COLUMN, item.getContent());
-        cv.put(DUE_DATE_COLUMN,item.getDueDate().getTime());
+        cv.put(DUE_DATE_COLUMN,item.getDueDate()!=null?item.getDueDate().getTime():null);
         cv.put(PRIORITY_COLUMN,item.getPriority());
 
         long id = db.insert(TABLE_NAME, null, cv);
@@ -62,7 +62,7 @@ public class TodoItemDAO {
 
         cv.put(TITLE_COLUMN, item.getTitle());
         cv.put(CONTENT_COLUMN, item.getContent());
-        cv.put(DUE_DATE_COLUMN,item.getDueDate().getTime());
+        cv.put(DUE_DATE_COLUMN,item.getDueDate()!=null?item.getDueDate().getTime():null);
         cv.put(PRIORITY_COLUMN,item.getPriority());
 
         String where = KEY_ID + "=" + item.getId();
@@ -115,7 +115,6 @@ public class TodoItemDAO {
         return result;
     }
 
-    // 取得資料數量
     public int getCount() {
         int result = 0;
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME, null);

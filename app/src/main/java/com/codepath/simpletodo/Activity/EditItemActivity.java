@@ -10,15 +10,18 @@ import android.widget.EditText;
 
 import com.codepath.simpletodo.Constant;
 import com.codepath.simpletodo.R;
+import com.codepath.simpletodo.TodoItem;
 
 public class EditItemActivity extends AppCompatActivity {
 
     private EditText etItemText;
     private Button btnSaveItem;
+    private TodoItem todoItem;
 
-    public static void editItem(Activity activity, String item, int pos) {
+
+    public static void editItem(Activity activity, TodoItem item, int pos) {
         Intent editIntent = new Intent(activity,EditItemActivity.class);
-        editIntent.putExtra(Constant.KEY_ITEM_TEXT,item);
+        editIntent.putExtra(Constant.KEY_ITEM,item);
         editIntent.putExtra(Constant.KEY_ITEM_POS,pos);
         activity.startActivityForResult(editIntent,Constant.ACTION_EDIT_ITEM);
     }
@@ -32,18 +35,20 @@ public class EditItemActivity extends AppCompatActivity {
         btnSaveItem = (Button) findViewById(R.id.btnSaveItem);
 
         if(getIntent()!=null &&
-                getIntent().hasExtra(Constant.KEY_ITEM_TEXT) &&
+                getIntent().hasExtra(Constant.KEY_ITEM) &&
                 getIntent().hasExtra(Constant.KEY_ITEM_POS)){
-            etItemText.setText(getIntent().getStringExtra(Constant.KEY_ITEM_TEXT));
+            todoItem = getIntent().getParcelableExtra(Constant.KEY_ITEM);
+            etItemText.setText(todoItem.getTitle());
             etItemText.setTag(getIntent().getIntExtra(Constant.KEY_ITEM_POS,-1));
         }
 
         btnSaveItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(etItemText.getText().length()!=0 && ((Integer)etItemText.getTag())!= -1){
+                if(etItemText.getText().length()!=0 && ((Integer)etItemText.getTag())!= -1 && todoItem!=null){
+                    todoItem.setTitle(etItemText.getText().toString());
                     Intent resIntent = new Intent();
-                    resIntent.putExtra(Constant.KEY_ITEM_TEXT,etItemText.getText().toString());
+                    resIntent.putExtra(Constant.KEY_ITEM,todoItem);
                     resIntent.putExtra(Constant.KEY_ITEM_POS, (Integer) etItemText.getTag());
                     setResult(RESULT_OK,resIntent);
                     finish();

@@ -17,14 +17,6 @@ public class TodoItem implements Parcelable {
     private Date dueDate;
     private int priority;
 
-    public TodoItem(Parcel in) {
-        id = in.readLong();
-        title = in.readString();
-        content = in.readString();
-        dueDate = (Date) in.readSerializable();
-        priority = in.readInt();
-    }
-
     public static final Creator<TodoItem> CREATOR = new Creator<TodoItem>() {
         @Override
         public TodoItem createFromParcel(Parcel in) {
@@ -37,9 +29,20 @@ public class TodoItem implements Parcelable {
         }
     };
 
+    private TodoItem(Parcel in) {
+        id = in.readLong();
+        title = in.readString();
+        content = in.readString();
+        dueDate = (Date) in.readSerializable();
+        priority = in.readInt();
+    }
+
     public TodoItem() {
 
+    }
 
+    public TodoItem(String itemText) {
+        setTitle(itemText);
     }
 
     @Override
