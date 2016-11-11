@@ -1,9 +1,11 @@
 package com.codepath.simpletodo.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,7 +19,10 @@ import com.codepath.simpletodo.R;
 import com.codepath.simpletodo.TodoItem;
 import com.codepath.simpletodo.model.TodoItemDAO;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<TodoItem> items;
     private ListView lvItems;
     private TodoItemDAO todoItemDAO;
+    private SimpleDateFormat sdf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +39,9 @@ public class MainActivity extends AppCompatActivity {
         todoItemDAO = new TodoItemDAO(getApplicationContext());
         lvItems = (ListView) findViewById(R.id.lvItems);
         items = new ArrayList<>();
+        sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         readItems();
-        itemsAdapter = new ArrayAdapter<TodoItem>(this, android.R.layout.simple_list_item_1, items){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position,convertView,parent);
-                ((TextView) view.findViewById(android.R.id.text1)).setText(items.get(position).getTitle());
-                return view;
-            }
-        };
+        itemsAdapter = new CustomArrayAdapter(this,R.layout.item_todo_item,items);
         lvItems.setAdapter(itemsAdapter);
 
         setupListViewListener();
@@ -118,4 +118,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private class CustomArrayAdapter extends ArrayAdapter<TodoItem> {
+
+
+        public CustomArrayAdapter(Context context, int resource, List<TodoItem> objects) {
+            super(context, resource, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TodoItem item = getItem(position);
+            ViewHolder viewHolder;
+
+            if (convertView == null) {
+                viewHolder = new ViewHolder();
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                convertView = inflater.inflate(R.layout.item_todo_item, parent, false);
+                viewHolder.title = (TextView) convertView.findViewById(R.id.txItemTitle);
+                viewHolder.dueDate = (TextView) convertView.findViewById(R.id.txItemDueDate);
+                viewHolder.priority = (TextView) convertView.findViewById(R.id.txItemPriority);
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            viewHolder.title.setText(item.getTitle());
+            if(item.getDueDate()!=null && item.getDueDate().getTime() != Constant.UNSET) {
+                viewHolder.dueDate.setText(sdf.format(item.getDueDate()));
+            }else{
+                viewHolder.dueDate.setText("");
+            }
+            if(item.getPriority()!=Constant.UNSET) {
+                viewHolder.priority.setText(new String[]{"Low","Med","High"}[item.getPriority()-1]);
+            }else{
+                viewHolder.priority.setText("");
+
+            }
+            return convertView;
+
+        }
+
+        private class ViewHolder {
+            TextView title;
+            TextView dueDate;
+            TextView priority;
+        }
+
+    }
 }
