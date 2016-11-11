@@ -1,5 +1,7 @@
 package com.codepath.simpletodo.activity;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EditItemDialogFragment.Callback {
 
     private ArrayAdapter<TodoItem> itemsAdapter;
     private ArrayList<TodoItem> items;
@@ -60,7 +62,15 @@ public class MainActivity extends AppCompatActivity {
         lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                EditItemActivity.editItem(MainActivity.this,items.get(position),position);
+                EditItemDialogFragment fragment = EditItemDialogFragment.getInstance(items.get(position),position);
+                fragment.setCallback(MainActivity.this);
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                fragment.show(ft, "dialog");
+
             }
         });
     }
@@ -102,19 +112,14 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+
+
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == Constant.ACTION_EDIT_ITEM){
-            if(resultCode == RESULT_OK){
-                int pos = data.getIntExtra(Constant.KEY_ITEM_POS,-1);
-                TodoItem item = data.getParcelableExtra(Constant.KEY_ITEM);
-                items.set(pos,item);
-                itemsAdapter.notifyDataSetChanged();
-                updateItem(item);
-            }
-        }else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+    public void onSave(TodoItem todoItem, Integer pos) {
+        TodoItem item = todoItem;
+        items.set(pos,item);
+        itemsAdapter.notifyDataSetChanged();
+        updateItem(item);
     }
 
 
